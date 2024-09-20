@@ -9,7 +9,7 @@ const Card = ({ title, features, image }) => {
   };
 
   return (
-    <div className="max-w-sm rounded overflow-hidden shadow-lg m-4">
+    <div className="max-w-lg mx-auto rounded overflow-hidden shadow-lg my-4 w-full sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-1/3">
       <img className="w-full" src={image} alt={title} />
       <div className="px-6 py-4">
         <div className="font-bold text-xl mb-2">{title}</div>
