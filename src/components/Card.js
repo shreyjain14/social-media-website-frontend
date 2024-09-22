@@ -14,9 +14,9 @@ const Card = ({ title, features, image }) => {
       <div className="px-6 py-4">
         <div className="font-bold text-xl mb-2">{title}</div>
         <ul className="text-gray-700 text-base">
-          {features.map((feature, index) => (
+          {(features && Array.isArray(features)) ? features.map((feature, index) => (
             <li key={index}>{feature}</li>
-          ))}
+          )) : null}
         </ul>
       </div>
       <div className="px-6 pt-4 pb-2">
