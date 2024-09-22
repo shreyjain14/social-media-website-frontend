@@ -1,15 +1,24 @@
 import React, { useState } from 'react';
 import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
 
 const PostForm = ({ onPostCreated }) => {
   const [newPost, setNewPost] = useState('');
   const [isAnonymous, setIsAnonymous] = useState(false);
+  const navigate = useNavigate();
 
   const handlePostSubmit = async (e) => {
     e.preventDefault();
+    const accessToken = Cookies.get('accessToken');
+    
+    if (!accessToken) {
+      // Redirect to login page if no access token is found
+      navigate('/login');
+      return;
+    }
+
     if (newPost.trim() !== '') {
       try {
-        const accessToken = Cookies.get('accessToken');
         const response = await fetch('/api/thoughts/create', {
           method: 'POST',
           headers: {
@@ -23,6 +32,12 @@ const PostForm = ({ onPostCreated }) => {
         });
 
         if (!response.ok) {
+          if (response.status === 401) {
+            // Token might be expired, redirect to login
+            Cookies.remove('accessToken');
+            navigate('/login');
+            return;
+          }
           throw new Error('Network response was not ok');
         }
 
