@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import './Navbar.css';
 
 const Navbar = ({ user, onLogout }) => {
   const [search, setSearch] = useState('');
@@ -18,7 +19,7 @@ const Navbar = ({ user, onLogout }) => {
   };
 
   return (
-    <nav className="bg-blue-600 p-4">
+    <nav className="bg-gray-600 p-4">
       <div className="container mx-auto flex justify-between items-center">
         <Link to="/" className="text-white text-2xl font-bold">ThoughtShare</Link>
         <form onSubmit={handleSearchSubmit} className="flex items-center">

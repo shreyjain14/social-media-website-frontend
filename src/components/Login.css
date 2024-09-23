@@ -1,0 +1,39 @@
+.progress-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 5px;
+    background-color: blue;
+    transition: width 0.3s ease-in-out;
+    border-radius: 10px 10px 0 0;
+}
+
+@keyframes progressBarAnimation {
+    0% {
+        background-color: blue;
+    }
+
+    50% {
+        background-color: lightblue;
+    }
+
+    100% {
+        background-color: blue;
+    }
+}
+
+@keyframes blinkRed {
+
+    0%,
+    100% {
+        background-color: red;
+    }
+
+    50% {
+        background-color: transparent;
+    }
+}
+
+.blink-red {
+    animation: blinkRed 1s infinite;
+}
