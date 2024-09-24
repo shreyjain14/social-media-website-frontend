@@ -43,7 +43,7 @@ const Login = ({ setUser }) => {
         <div className="absolute inset-0 flex flex-col items-center justify-center glass-effect text-white p-8">
           <h1 className="text-4xl font-bold mb-4">
             <Typing
-              text={['Welcome to ThoughtShare', 'Share your thoughts with the world']}
+              text={['Welcome to Unveil', 'Share your thoughts with the world']}
               speed={100}
               eraseSpeed={50}
               eraseDelay={2000}
