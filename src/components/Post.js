@@ -7,7 +7,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Heart } from "lucide-react";
 
-const Post = ({ id, content, user_id, userName, userAvatar, date, likes, liked, updatePostLikes }) => {
+const Post = ({ 
+  id, 
+  content = '', 
+  user_id = null, 
+  userAvatar = '', 
+  date = new Date(), 
+  likes = 0, 
+  liked = false, 
+  updatePostLikes 
+}) => {
   const [isLiking, setIsLiking] = useState(false);
   const [likeState, setLikeState] = useState({ liked, likes });
   const navigate = useNavigate();
@@ -51,7 +60,7 @@ const Post = ({ id, content, user_id, userName, userAvatar, date, likes, liked, 
   };
 
   const likeCount = Math.floor(likeState.likes / 2);
-  const displayName = userName || 'Anonymous';
+  const displayName = user_id || "Anonymous";
   const avatarFallback = displayName.charAt(0).toUpperCase();
 
   return (
@@ -62,7 +71,7 @@ const Post = ({ id, content, user_id, userName, userAvatar, date, likes, liked, 
           <AvatarFallback>{avatarFallback}</AvatarFallback>
         </Avatar>
         <div className="flex flex-col">
-          <Link to={`/user/${user_id}`} className="text-lg font-semibold text-blue-600 hover:underline">
+          <Link to={user_id ? `/user/${user_id}` : '#'} className="text-lg font-semibold text-blue-600 hover:underline">
             {displayName}
           </Link>
           <p className="text-sm text-muted-foreground">{new Date(date).toLocaleString()}</p>
