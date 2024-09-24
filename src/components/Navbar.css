@@ -1,5 +1,12 @@
+.fixed-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background-color: #393e46;
+}
+
 .bg-gray-600 {
     background-color: #393e46;
-  
-    
 }

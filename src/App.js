@@ -56,8 +56,8 @@ const App = () => {
   };
 
   const Home = () => (
-    <div className="container mx-auto p-4 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold mb-4 text-center">ThoughtShare</h1>
+    <div className="container mx-auto p-4 bg-gray-100 min-h-screen pt-10"> 
+      
       <p className="text-center mb-4">Welcome, {user ? user.username : 'Guest'}!</p>
       {user && <PostForm onPostCreated={handlePostCreated} />}
       <div className="flex flex-col items-center">
@@ -70,13 +70,15 @@ const App = () => {
 
   return (
     <Router>
-      <Navbar user={user} onLogout={handleLogout} />
-      <Routes>
-        <Route path="/login" element={<Login setUser={setUser} />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/user/:username" element={<UserPage />} />
-        <Route path="/" element={<Home />} />
-      </Routes>
+      <div className="pt-16"> {/* Added padding-top to account for fixed navbar */}
+        <Navbar user={user} onLogout={handleLogout} />
+        <Routes>
+          <Route path="/login" element={<Login setUser={setUser} />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/user/:username" element={<UserPage />} />
+          <Route path="/" element={<Home />} />
+        </Routes>
+      </div>
     </Router>
   );
 };
