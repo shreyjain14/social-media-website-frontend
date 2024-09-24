@@ -10,6 +10,7 @@ const Navbar = ({ user, onLogout }) => {
     e.preventDefault();
     if (search.trim() !== '') {
       navigate(`/user/${search}`);
+      setSearch(''); // Clear the search input after submitting
     }
   };
 
