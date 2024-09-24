@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import './Register.css'; // Ensure the CSS file is imported
+import './Register.css';
 
 const Register = () => {
   const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [reenterPassword, setReenterPassword] = useState('');
   const [error, setError] = useState('');
   const [progress, setProgress] = useState(0);
   const navigate = useNavigate();
@@ -16,11 +17,29 @@ const Register = () => {
     if (username) filledFields += 1;
     if (email) filledFields += 1;
     if (password) filledFields += 1;
-    setProgress((filledFields / 3) * 100);
-  }, [username, email, password]);
+    if (reenterPassword) filledFields += 1;
+    setProgress((filledFields / 4) * 100);
+  }, [username, email, password, reenterPassword]);
+
+  const validatePassword = (password) => {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+    return regex.test(password);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+
+    if (!validatePassword(password)) {
+      setError('Password must be at least 8 characters long and contain at least 1 symbol, 1 uppercase letter, 1 lowercase letter, and 1 number.');
+      return;
+    }
+
+    if (password !== reenterPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
     try {
       const response = await axios.post('http://127.0.0.1:5000/auth/register', {
         username,
@@ -82,6 +101,17 @@ const Register = () => {
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="mt-4">
+                  <label className="block" htmlFor="reenterPassword">Re-enter Password</label>
+                  <input
+                    type="password"
+                    placeholder="Re-enter Password"
+                    className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
+                    value={reenterPassword}
+                    onChange={(e) => setReenterPassword(e.target.value)}
                     required
                   />
                 </div>

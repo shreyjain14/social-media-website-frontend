@@ -18,6 +18,8 @@ const Post = ({
   updatePostLikes 
 }) => {
   const [isLiking, setIsLiking] = useState(false);
+  const [localLiked, setLocalLiked] = useState(liked);
+  const [localLikes, setLocalLikes] = useState(likes);
   const navigate = useNavigate();
 
   const handleLike = async () => {
@@ -30,8 +32,12 @@ const Post = ({
 
     setIsLiking(true);
 
-    const newLikedStatus = !liked;
-    const newLikesCount = newLikedStatus ? likes + 2 : likes - 2;
+    const newLikedStatus = !localLiked;
+    const newLikesCount = newLikedStatus ? localLikes + 2 : localLikes - 2;
+
+    // Update local state immediately
+    setLocalLiked(newLikedStatus);
+    setLocalLikes(newLikesCount);
 
     try {
       const response = await axios.post('/api/thoughts/like', 
@@ -45,16 +51,24 @@ const Post = ({
       );
 
       if (response.data.success) {
+        // Update parent component's state
         updatePostLikes(id, newLikedStatus, newLikesCount);
+      } else {
+        // If the server request fails, revert the local state
+        setLocalLiked(!newLikedStatus);
+        setLocalLikes(newLikedStatus ? newLikesCount - 2 : newLikesCount + 2);
       }
     } catch (error) {
       console.error('Error liking post:', error);
+      // Revert local state on error
+      setLocalLiked(!newLikedStatus);
+      setLocalLikes(newLikedStatus ? newLikesCount - 2 : newLikesCount + 2);
     } finally {
       setIsLiking(false);
     }
   };
 
-  const likeCount = Math.floor(likes / 2);
+  const likeCount = Math.floor(localLikes / 2);
   const displayName = user_id || "Anonymous";
   const avatarFallback = displayName.charAt(0).toUpperCase();
 
@@ -79,11 +93,11 @@ const Post = ({
         <Button
           variant="ghost"
           size="sm"
-          className={`flex items-center gap-2 ${liked ? "text-red-500" : "text-muted-foreground"}`}
+          className={`flex items-center gap-2 ${localLiked ? "text-red-500" : "text-muted-foreground"}`}
           onClick={handleLike}
           disabled={isLiking}
         >
-          <Heart className={`h-5 w-5 ${liked ? "fill-current" : ""}`} />
+          <Heart className={`h-5 w-5 ${localLiked ? "fill-current" : ""}`} />
           <span>{likeCount}</span>
         </Button>
       </CardFooter>
