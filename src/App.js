@@ -105,6 +105,16 @@ const App = () => {
     setHasMore(true);
   };
 
+  const updatePostLikes = (postId, newLikedStatus, newLikesCount) => {
+    setPosts(prevPosts => 
+      prevPosts.map(post => 
+        post.id === postId 
+          ? { ...post, liked: newLikedStatus, likes: newLikesCount } 
+          : post
+      )
+    );
+  };
+
   const Home = () => (
     <div className="container mx-auto p-4 bg-gray-100 min-h-screen pt-10">
       <p className="text-center mb-4">Welcome, {user ? user.username : 'Guest'}!</p>
@@ -112,9 +122,13 @@ const App = () => {
       <div className="flex flex-col items-center">
         {posts.map((post, index) => {
           if (posts.length === index + 1) {
-            return <div ref={lastPostElementRef} key={post.id}><Post {...post} /></div>;
+            return (
+              <div ref={lastPostElementRef} key={post.id}>
+                <Post {...post} updatePostLikes={updatePostLikes} />
+              </div>
+            );
           } else {
-            return <Post key={post.id} {...post} />;
+            return <Post key={post.id} {...post} updatePostLikes={updatePostLikes} />;
           }
         })}
         {loading && <p>Loading...</p>}
