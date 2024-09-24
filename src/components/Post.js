@@ -12,7 +12,7 @@ const Post = ({
   content = '', 
   user_id = null, 
   userAvatar = '', 
-  date = new Date(), 
+  date = '', 
   likes = 0, 
   liked = false, 
   updatePostLikes 
@@ -35,7 +35,6 @@ const Post = ({
     const newLikedStatus = !localLiked;
     const newLikesCount = newLikedStatus ? localLikes + 2 : localLikes - 2;
 
-    // Update local state immediately
     setLocalLiked(newLikedStatus);
     setLocalLikes(newLikesCount);
 
@@ -51,16 +50,13 @@ const Post = ({
       );
 
       if (response.data.success) {
-        // Update parent component's state
         updatePostLikes(id, newLikedStatus, newLikesCount);
       } else {
-        // If the server request fails, revert the local state
         setLocalLiked(!newLikedStatus);
         setLocalLikes(newLikedStatus ? newLikesCount - 2 : newLikesCount + 2);
       }
     } catch (error) {
       console.error('Error liking post:', error);
-      // Revert local state on error
       setLocalLiked(!newLikedStatus);
       setLocalLikes(newLikedStatus ? newLikesCount - 2 : newLikesCount + 2);
     } finally {
@@ -71,6 +67,28 @@ const Post = ({
   const likeCount = Math.floor(localLikes / 2);
   const displayName = user_id || "Anonymous";
   const avatarFallback = displayName.charAt(0).toUpperCase();
+
+  const formatDate = (dateString) => {
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        throw new Error('Invalid date');
+      }
+      return date.toLocaleString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      });
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return dateString;
+    }
+  };
+
+  const formattedDate = formatDate(date);
 
   return (
     <Card className="w-full max-w-md">
@@ -83,7 +101,7 @@ const Post = ({
           <Link to={user_id ? `/user/${user_id}` : '#'} className="text-lg font-semibold text-blue-600 hover:underline">
             {displayName}
           </Link>
-          <p className="text-sm text-muted-foreground">{new Date(date).toLocaleString()}</p>
+          <p className="text-sm text-muted-foreground">{formattedDate}</p>
         </div>
       </CardHeader>
       <CardContent>

@@ -10,6 +10,7 @@ const Login = ({ setUser, onLogin }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [progress, setProgress] = useState(0);
+  const [forgotPasswordMessage, setForgotPasswordMessage] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -39,6 +40,13 @@ const Login = ({ setUser, onLogin }) => {
     }
   };
 
+  const handleForgotPassword = (e) => {
+    e.preventDefault();
+    setForgotPasswordMessage('Please check your email for password reset instructions.');
+    // Here you would typically call an API to initiate the password reset process
+    // For now, we're just showing a message
+  };
+
   return (
     <div className="flex h-screen overflow-hidden">
       <div className="w-1/2 relative h-full">
@@ -46,7 +54,7 @@ const Login = ({ setUser, onLogin }) => {
         <div className="absolute inset-0 flex flex-col items-center justify-center glass-effect text-white p-8">
           <h1 className="text-4xl font-bold mb-4">
             <Typing
-              text={['Welcome to Unveil', 'Share your thoughts with the world']}
+              text={['Welcome to Unveil', 'Unfiltered Thoughts, Unlimited Expression']}
               speed={100}
               eraseSpeed={50}
               eraseDelay={2000}
@@ -86,13 +94,14 @@ const Login = ({ setUser, onLogin }) => {
                   />
                 </div>
                 {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+                {forgotPasswordMessage && <p className="text-green-500 text-sm mt-2">{forgotPasswordMessage}</p>}
                 <div className="flex items-center justify-center">
                   <button className="px-6 py-2 mt-4 text-white bg-blue-600 rounded-lg hover:bg-blue-900">Login</button>
                 </div>
               </div>
             </form>
             <p className="mt-2 text-center">
-               <Link to="/forgot-password" className="text-blue-600 hover:underline">Forgot Password?</Link>
+               <a href="#" onClick={handleForgotPassword} className="text-blue-600 hover:underline">Forgot Password?</a>
             </p>
             <p className="mt-4 text-center">
               Don't have an account? <Link to="/register" className="text-blue-600 hover:underline">Register</Link>
