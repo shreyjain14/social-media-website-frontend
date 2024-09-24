@@ -82,7 +82,11 @@ const App = () => {
           const uniquePosts = updatedPosts.filter((post, index, self) =>
             index === self.findIndex((t) => t.id === post.id)
           );
-          return uniquePosts;
+          return uniquePosts.map(post => ({
+            ...post,
+            likes: post.likes || 0,
+            liked: post.liked || false
+          }));
         });
       }
     } catch (error) {
@@ -105,7 +109,6 @@ const App = () => {
     setHasMore(true);
   };
 
-  // Function to optimistically update likes and revert if the server request fails
   const updatePostLikes = (postId, newLikedStatus, newLikesCount) => {
     setPosts(prevPosts => 
       prevPosts.map(post => 
@@ -115,8 +118,6 @@ const App = () => {
       )
     );
   };
-  
-  
 
   const Home = () => (
     <div className="container mx-auto p-4 bg-gray-100 min-h-screen pt-10">

@@ -21,7 +21,7 @@ const Navbar = ({ user, onLogout }) => {
   return (
     <nav className="fixed-navbar bg-gray-600 p-4 w-full">
       <div className="container mx-auto flex justify-between items-center">
-        <Link to="/" className="text-white text-2xl font-bold">ThoughtShare</Link>
+        <Link to="/" className="text-white text-2xl font-bold">Unveil</Link>
         <form onSubmit={handleSearchSubmit} className="flex items-center">
           <input
             type="text"

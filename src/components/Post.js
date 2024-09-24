@@ -18,7 +18,6 @@ const Post = ({
   updatePostLikes 
 }) => {
   const [isLiking, setIsLiking] = useState(false);
-  const [likeState, setLikeState] = useState({ liked, likes });
   const navigate = useNavigate();
 
   const handleLike = async () => {
@@ -31,9 +30,8 @@ const Post = ({
 
     setIsLiking(true);
 
-    const newLikedStatus = !likeState.liked;
-    const newLikesCount = newLikedStatus ? likeState.likes + 2 : likeState.likes - 2;
-    setLikeState({ liked: newLikedStatus, likes: newLikesCount });
+    const newLikedStatus = !liked;
+    const newLikesCount = newLikedStatus ? likes + 2 : likes - 2;
 
     try {
       const response = await axios.post('/api/thoughts/like', 
@@ -48,18 +46,15 @@ const Post = ({
 
       if (response.data.success) {
         updatePostLikes(id, newLikedStatus, newLikesCount);
-      } else {
-        setLikeState({ liked, likes });
       }
     } catch (error) {
       console.error('Error liking post:', error);
-      setLikeState({ liked, likes });
     } finally {
       setIsLiking(false);
     }
   };
 
-  const likeCount = Math.floor(likeState.likes / 2);
+  const likeCount = Math.floor(likes / 2);
   const displayName = user_id || "Anonymous";
   const avatarFallback = displayName.charAt(0).toUpperCase();
 
@@ -84,11 +79,11 @@ const Post = ({
         <Button
           variant="ghost"
           size="sm"
-          className={`flex items-center gap-2 ${likeState.liked ? "text-red-500" : "text-muted-foreground"}`}
+          className={`flex items-center gap-2 ${liked ? "text-red-500" : "text-muted-foreground"}`}
           onClick={handleLike}
           disabled={isLiking}
         >
-          <Heart className={`h-5 w-5 ${likeState.liked ? "fill-current" : ""}`} />
+          <Heart className={`h-5 w-5 ${liked ? "fill-current" : ""}`} />
           <span>{likeCount}</span>
         </Button>
       </CardFooter>
