@@ -1,12 +1,119 @@
+/* Navbar.css */
+
 .fixed-navbar {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 1000;
-    background-color: #393e46;
+    background-color: #1a202c;
+    /* Darker background */
+    padding: 1rem 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Add shadow for depth */
 }
 
-.bg-gray-600 {
-    background-color: #393e46;
+.fixed-navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.fixed-navbar a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.fixed-navbar a:hover {
+    color: #63b3ed;
+    /* Light blue on hover */
+}
+
+.fixed-navbar form {
+    display: flex;
+    align-items: center;
+    background-color: #2d3748;
+    /* Darker input background */
+    border-radius: 9999px;
+    /* Fully rounded */
+    overflow: hidden;
+}
+
+.fixed-navbar input[type="text"] {
+    padding: 0.5rem 1rem;
+    border: none;
+    outline: none;
+    background: none;
+    color: #fff;
+    width: 200px;
+    transition: width 0.3s ease;
+}
+
+.fixed-navbar input[type="text"]::placeholder {
+    color: #a0aec0;
+    /* Light gray placeholder */
+}
+
+.fixed-navbar input[type="text"]:focus {
+    width: 300px;
+    /* Expand on focus */
+}
+
+.fixed-navbar button {
+    padding: 0.5rem 1rem;
+    background-color: #63b3ed;
+    /* Light blue button */
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.fixed-navbar button:hover {
+    background-color: #3182ce;
+    /* Darker blue on hover */
+}
+
+.fixed-navbar .user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.fixed-navbar .user-info span {
+    color: #fff;
+    font-size: 1rem;
+}
+
+.fixed-navbar .user-info button {
+    padding: 0.5rem 1rem;
+    background-color: #e53e3e;
+    /* Red logout button */
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.fixed-navbar .user-info button:hover {
+    background-color: #c53030;
+    /* Darker red on hover */
+}
+
+.fixed-navbar .user-info a {
+    padding: 0.5rem 1rem;
+    background-color: #4a5568;
+    /* Gray button */
+    border-radius: 9999px;
+    color: #fff;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.fixed-navbar .user-info a:hover {
+    background-color: #2d3748;
+    /* Darker gray on hover */
 }

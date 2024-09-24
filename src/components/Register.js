@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import confetti from 'canvas-confetti';
 import './Register.css';
 
 const Register = () => {
@@ -10,6 +11,7 @@ const Register = () => {
   const [reenterPassword, setReenterPassword] = useState('');
   const [error, setError] = useState('');
   const [progress, setProgress] = useState(0);
+  const [isRegistered, setIsRegistered] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -48,27 +50,39 @@ const Register = () => {
       });
 
       if (response.status === 201) {
-        navigate('/login');
+        setIsRegistered(true);
+        showConfetti();
+        setTimeout(() => {
+          navigate('/login');
+        }, 5000); // Redirect after 5 seconds
       }
     } catch (error) {
       setError('Registration failed. Please try again.');
     }
   };
 
+  const showConfetti = () => {
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
+  };
+
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden relative">
       <div className="w-1/2 relative h-full">
-        <img src="https://images.unsplash.com/photo-1503198515498-d0bd9ed16902?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Clouds" className="absolute inset-0 w-full h-full object-cover" />
+        <img src="https://images.unsplash.com/photo-1503198515498-d0bd9ed16902?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Background" className="w-full h-full object-cover" />
         <div className="absolute inset-0 flex flex-col items-center justify-center glass-effect text-white p-8">
-          <h1 className="text-4xl font-bold mb-4">Join ThoughtShare</h1>
+          <h1 className="text-4xl font-bold mb-4">Join Unveil</h1>
           <p className="text-lg">Become a part of our community and share your thoughts with the world.</p>
         </div>
       </div>
       <div className="w-1/2 flex items-center justify-center h-full">
-        <div className="relative w-full max-w-md">
+        <div className="relative w-full max-w-md registration-form">
           <div className={`progress-bar ${error ? 'blink-red' : ''}`} style={{ width: `${progress}%` }}></div>
-          <div className="relative px-8 py-6 mt-4 text-left shadow-lg">
-            <h3 className="text-2xl font-bold text-center">Register for ThoughtShare</h3>
+          <div className="relative px-8 py-6 mt-4 text-left shadow-lg bg-white rounded-lg">
+            <h3 className="text-2xl font-bold text-center">Register for Unveil</h3>
             <form onSubmit={handleSubmit}>
               <div className="mt-4">
                 <div>
@@ -127,6 +141,13 @@ const Register = () => {
           </div>
         </div>
       </div>
+      {isRegistered && (
+        <div className="overlay">
+          <div className="popup-message">
+            Time to free your mind and share your thoughts with the world! Redirecting to login... :)
+          </div>
+        </div>
+      )}
     </div>
   );
 };

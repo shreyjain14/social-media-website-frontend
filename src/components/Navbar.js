@@ -38,7 +38,7 @@ const Navbar = ({ user, onLogout }) => {
             Search
           </button>
         </form>
-        <div className="flex items-center">
+        <div className="user-info flex items-center">
           {user ? (
             <>
               <span className="text-white mr-4">Welcome, {user.username}</span>
@@ -51,8 +51,8 @@ const Navbar = ({ user, onLogout }) => {
             </>
           ) : (
             <>
-              <Link to="/login" className="text-white mr-4 hover:underline">Login</Link>
-              <Link to="/register" className="text-white hover:underline">Register</Link>
+              <Link to="/login" className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 focus:outline-none mr-2">Login</Link>
+              <Link to="/register" className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 focus:outline-none">Register</Link>
             </>
           )}
         </div>
