@@ -33,6 +33,7 @@ const App = () => {
     if (accessToken) {
       fetchUserInfo(accessToken);
     }
+    fetchPosts();
   }, []);
 
   useEffect(() => {
@@ -107,16 +108,47 @@ const App = () => {
     setPosts([]);
     setPage(1);
     setHasMore(true);
+    fetchPosts();
   };
 
-  const updatePostLikes = (postId, newLikedStatus, newLikesCount) => {
-    setPosts(prevPosts => 
-      prevPosts.map(post => 
-        post.id === postId 
-          ? { ...post, liked: newLikedStatus, likes: newLikesCount } 
-          : post
-      )
-    );
+  const handleLogin = async (accessToken) => {
+    await fetchUserInfo(accessToken);
+    setPosts([]);
+    setPage(1);
+    setHasMore(true);
+    await fetchPosts();
+  };
+
+  const handleLike = async (postId) => {
+    const accessToken = Cookies.get('accessToken');
+    if (!accessToken) {
+      // Redirect to login if not authenticated
+      return;
+    }
+
+    try {
+      const response = await axios.post('/api/thoughts/like', 
+        { thought_id: postId },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+          }
+        }
+      );
+
+      if (response.data.success) {
+        setPosts(prevPosts => 
+          prevPosts.map(post => 
+            post.id === postId 
+              ? { ...post, liked: !post.liked, likes: post.liked ? post.likes - 2 : post.likes + 2 } 
+              : post
+          )
+        );
+      }
+    } catch (error) {
+      console.error('Error liking post:', error);
+    }
   };
 
   const Home = () => (
@@ -128,11 +160,11 @@ const App = () => {
           if (posts.length === index + 1) {
             return (
               <div ref={lastPostElementRef} key={post.id}>
-                <Post {...post} updatePostLikes={updatePostLikes} />
+                <Post {...post} onLike={() => handleLike(post.id)} />
               </div>
             );
           } else {
-            return <Post key={post.id} {...post} updatePostLikes={updatePostLikes} />;
+            return <Post key={post.id} {...post} onLike={() => handleLike(post.id)} />;
           }
         })}
         {loading && <p>Loading...</p>}
@@ -146,7 +178,7 @@ const App = () => {
       <div className="pt-16">
         <Navbar user={user} onLogout={handleLogout} />
         <Routes>
-          <Route path="/login" element={<Login setUser={setUser} />} />
+          <Route path="/login" element={<Login setUser={setUser} onLogin={handleLogin} />} />
           <Route path="/register" element={<Register />} />
           <Route path="/user/:username" element={<UserPage />} />
           <Route path="/" element={<Home />} />

@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
 import Typing from 'react-typing-effect';
 import './Login.css'; 
 
-const Login = ({ setUser }) => {
+const Login = ({ setUser, onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -29,7 +29,10 @@ const Login = ({ setUser }) => {
       const { access, refresh } = response.data.tokens;
       Cookies.set('accessToken', access);
       Cookies.set('refreshToken', refresh);
-      setUser(username);
+      
+      // Call onLogin function with the access token
+      await onLogin(access);
+      
       navigate('/');
     } catch (error) {
       setError('Invalid username or password');
@@ -87,7 +90,6 @@ const Login = ({ setUser }) => {
                   <button className="px-6 py-2 mt-4 text-white bg-blue-600 rounded-lg hover:bg-blue-900">Login</button>
                 </div>
               </div>
-              
             </form>
             <p className="mt-2 text-center">
                <Link to="/forgot-password" className="text-blue-600 hover:underline">Forgot Password?</Link>
