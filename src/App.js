@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -12,16 +12,32 @@ import UserPage from './components/UserPage';
 const App = () => {
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const observer = useRef();
+
+  const lastPostElementRef = useCallback(node => {
+    if (loading) return;
+    if (observer.current) observer.current.disconnect();
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore) {
+        setPage(prevPage => prevPage + 1);
+      }
+    });
+    if (node) observer.current.observe(node);
+  }, [loading, hasMore]);
 
   useEffect(() => {
     const accessToken = Cookies.get('accessToken');
     if (accessToken) {
       fetchUserInfo(accessToken);
     }
-    fetchPosts(currentPage);
   }, []);
+
+  useEffect(() => {
+    fetchPosts();
+  }, [page]);
 
   const fetchUserInfo = async (accessToken) => {
     try {
@@ -38,12 +54,12 @@ const App = () => {
     }
   };
 
-  const fetchPosts = async (page) => {
+  const fetchPosts = async () => {
     setLoading(true);
     try {
       const accessToken = Cookies.get('accessToken');
       let response;
-      const params = { post: page };
+      const params = { page: page };
       
       if (accessToken) {
         response = await axios.get('/api/thoughts/get-with-login', {
@@ -56,7 +72,19 @@ const App = () => {
       } else {
         response = await axios.get('/api/thoughts/get', { params });
       }
-      setPosts(response.data);
+      
+      const newPosts = response.data;
+      if (newPosts.length === 0) {
+        setHasMore(false);
+      } else {
+        setPosts(prevPosts => {
+          const updatedPosts = [...prevPosts, ...newPosts];
+          const uniquePosts = updatedPosts.filter((post, index, self) =>
+            index === self.findIndex((t) => t.id === post.id)
+          );
+          return uniquePosts;
+        });
+      }
     } catch (error) {
       console.error('Error fetching posts:', error);
     } finally {
@@ -72,13 +100,9 @@ const App = () => {
     Cookies.remove('accessToken');
     Cookies.remove('refreshToken');
     setUser(null);
-    setCurrentPage(1);
-    fetchPosts(1);
-  };
-
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-    fetchPosts(newPage);
+    setPosts([]);
+    setPage(1);
+    setHasMore(true);
   };
 
   const Home = () => (
@@ -86,27 +110,15 @@ const App = () => {
       <p className="text-center mb-4">Welcome, {user ? user.username : 'Guest'}!</p>
       {user && <PostForm onPostCreated={handlePostCreated} />}
       <div className="flex flex-col items-center">
-        {loading ? (
-          <p>Loading...</p>
-        ) : (
-          posts.map(post => <Post key={post.id} {...post} />)
-        )}
-      </div>
-      <div className="flex justify-center mt-4">
-        <button 
-          onClick={() => handlePageChange(currentPage - 1)}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
-          disabled={currentPage === 1 || loading}
-        >
-          Previous
-        </button>
-        <button 
-          onClick={() => handlePageChange(currentPage + 1)}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          disabled={loading}
-        >
-          Next
-        </button>
+        {posts.map((post, index) => {
+          if (posts.length === index + 1) {
+            return <div ref={lastPostElementRef} key={post.id}><Post {...post} /></div>;
+          } else {
+            return <Post key={post.id} {...post} />;
+          }
+        })}
+        {loading && <p>Loading...</p>}
+        {!hasMore && <p className="text-center mt-4">No more posts left</p>}
       </div>
     </div>
   );
