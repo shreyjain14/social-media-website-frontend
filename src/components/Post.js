@@ -68,7 +68,7 @@ const Post = ({
   };
 
   return (
-    <UICard className="max-w-lg mx-auto rounded overflow-hidden shadow-lg my-4 w-full sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-1/3 hover:shadow-xl transition-shadow duration-300">
+    <UICard className="max-w-lg mx-auto rounded overflow-hidden shadow-lg my-4 w-full sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-1/3">
       <CardHeader>
         <div className="flex items-center mb-2">
           <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center mr-4">
