@@ -1,73 +1,89 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { Heart } from "lucide-react";
 
-const Post = ({ id, content, user_id, date, likes, liked, updatePostLikes }) => {
-  const [isLiking, setIsLiking] = useState(false);  // For handling like button click state
+const Post = ({ id, content, user_id, userName, userAvatar, date, likes, liked, updatePostLikes }) => {
+  const [isLiking, setIsLiking] = useState(false);
+  const [likeState, setLikeState] = useState({ liked, likes });
+  const navigate = useNavigate();
 
   const handleLike = async () => {
-    if (isLiking) return; // Prevent multiple like actions while one is in progress
-
+    if (isLiking) return;
     const accessToken = Cookies.get('accessToken');
     if (!accessToken) {
-      alert('Please log in to like posts');
+      navigate('/login');
       return;
     }
 
-    setIsLiking(true);  // Disable button while processing the like action
+    setIsLiking(true);
+
+    const newLikedStatus = !likeState.liked;
+    const newLikesCount = newLikedStatus ? likeState.likes + 2 : likeState.likes - 2;
+    setLikeState({ liked: newLikedStatus, likes: newLikesCount });
 
     try {
-      // Make a POST request to like/unlike the post
       const response = await axios.post('/api/thoughts/like', 
         { thought_id: id },
         {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${accessToken}`
+            'Authorization': `Bearer ${accessToken}`,
           }
         }
       );
 
       if (response.data.success) {
-        // Toggle the liked status and update likes count by 2
-        const newLikedStatus = !liked;
-        const newLikesCount = newLikedStatus ? likes + 2 : likes - 2;  // Change by 2
-        updatePostLikes(id, newLikedStatus, newLikesCount);  // Call parent to update post state
+        updatePostLikes(id, newLikedStatus, newLikesCount);
+      } else {
+        setLikeState({ liked, likes });
       }
     } catch (error) {
       console.error('Error liking post:', error);
+      setLikeState({ liked, likes });
     } finally {
-      setIsLiking(false);  // Re-enable the like button after processing
+      setIsLiking(false);
     }
   };
 
-  const likeCount = Math.floor(likes / 2);  // Show actual likes by dividing
+  const likeCount = Math.floor(likeState.likes / 2);
+  const displayName = userName || 'Anonymous';
+  const avatarFallback = displayName.charAt(0).toUpperCase();
 
   return (
-    <div className="max-w-md rounded-lg overflow-hidden shadow-lg m-4 bg-white">
-      <div className="px-6 py-4">
-        {/* Link to user's profile */}
-        <Link to={`/user/${user_id}`} className="font-bold text-xl mb-2 text-blue-600 hover:underline">
-          {user_id || 'Anonymous'}
-        </Link>
-
-        {/* Post content */}
-        <p className="text-gray-700 text-base mb-4">{content}</p>
-        
-        {/* Post date */}
-        <p className="text-gray-500 text-sm">{new Date(date).toLocaleString()}</p>
-
-        {/* Like button */}
-        <button 
-          onClick={handleLike}  // Like/Unlike post on button click
-          disabled={isLiking}  // Disable button while like request is being processed
-          className={`text-sm focus:outline-none ${liked ? 'text-red-500' : 'text-gray-500'}`}  // Change color based on liked status
+    <Card className="w-full max-w-md">
+      <CardHeader className="flex flex-row items-center gap-4">
+        <Avatar>
+          <AvatarImage src={userAvatar} alt={displayName} />
+          <AvatarFallback>{avatarFallback}</AvatarFallback>
+        </Avatar>
+        <div className="flex flex-col">
+          <Link to={`/user/${user_id}`} className="text-lg font-semibold text-blue-600 hover:underline">
+            {displayName}
+          </Link>
+          <p className="text-sm text-muted-foreground">{new Date(date).toLocaleString()}</p>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <p className="text-base">{content}</p>
+      </CardContent>
+      <CardFooter>
+        <Button
+          variant="ghost"
+          size="sm"
+          className={`flex items-center gap-2 ${likeState.liked ? "text-red-500" : "text-muted-foreground"}`}
+          onClick={handleLike}
+          disabled={isLiking}
         >
-          {likeCount} {liked ? '💗' : '🤍'}  {/* Show the correct heart icon */}
-        </button>
-      </div>
-    </div>
+          <Heart className={`h-5 w-5 ${likeState.liked ? "fill-current" : ""}`} />
+          <span>{likeCount}</span>
+        </Button>
+      </CardFooter>
+    </Card>
   );
 };
 
