@@ -54,7 +54,7 @@ const Register = () => {
         showConfetti();
         setTimeout(() => {
           navigate('/login');
-        }, 5000); // Redirect after 5 seconds
+        }, 1000); // Redirect after 5 seconds
       }
     } catch (error) {
       setError('Registration failed. Please try again.');
