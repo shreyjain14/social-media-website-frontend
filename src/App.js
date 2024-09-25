@@ -42,7 +42,7 @@ const App = () => {
 
   const fetchUserInfo = async (accessToken) => {
     try {
-      const response = await axios.get('http://127.0.0.1:5000/auth/whoami', {
+      const response = await axios.get('api/auth/whoami', {
         headers: { Authorization: `Bearer ${accessToken}` }
       });
       const { user_details } = response.data;

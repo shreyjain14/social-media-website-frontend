@@ -68,7 +68,7 @@ const Login = ({ setUser, onLogin }) => {
         <div className="relative w-full max-w-md">
           <div className={`progress-bar ${error ? 'blink-red' : ''}`} style={{ width: `${progress}%` }}></div>
           <div className="relative px-8 py-6 mt-4 text-left shadow-lg">
-            <h3 className="text-2xl font-bold text-center">Login to ThoughtShare</h3>
+            <h3 className="text-2xl font-bold text-center">Login to Unveil</h3>
             <form onSubmit={handleSubmit}>
               <div className="mt-4">
                 <div>

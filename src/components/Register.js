@@ -144,7 +144,7 @@ const Register = () => {
       {isRegistered && (
         <div className="overlay">
           <div className="popup-message">
-            Time to free your mind and share your thoughts with the world! Redirecting to login... :)
+            Unleash :)
           </div>
         </div>
       )}

@@ -55,15 +55,17 @@ const Post = ({
       } else {
         // If the server request fails, revert the local state
         setLocalLiked(!newLikedStatus);
-        setLocalLikes(newLikedStatus ? localLikes - 1 : localLikes + 1);
+        setLocalLikes(newLikedStatus ? localLikes + 2 : localLikes - 2);
+        setLocalLiked(localLiked ? 'text-gray-500' : 'text-red-500 fill-current')
       }
     } catch (error) {
       console.error('Error liking post:', error);
       // Revert the local state in case of error
       setLocalLiked(!newLikedStatus);
-      setLocalLikes(newLikedStatus ? localLikes - 1 : localLikes + 1);
+      setLocalLikes(newLikedStatus ? localLikes + 2 : localLikes - 2);
+      setLocalLiked(localLiked ? 'text-gray-500' : 'text-red-500 fill-current')
     } finally {
-      setIsLiking(false);
+      setIsLiking(localLiked);
     }
   };
 
@@ -75,7 +77,7 @@ const Post = ({
             <span className="text-lg font-bold text-gray-700">{user_id ? user_id.charAt(0).toUpperCase() : '?'}</span>
           </div>
           <div className="text-sm">
-            <p className="text-gray-900 leading-none">{user_id || 'Unknown User'}</p>
+            <p className="text-gray-900 leading-none">{user_id || 'Anonymous'}</p>
             <p className="text-gray-600">{new Date(date).toLocaleDateString()}</p>
           </div>
         </div>
@@ -86,7 +88,7 @@ const Post = ({
       <CardFooter className="flex justify-between items-center">
         <Button onClick={handleLike} disabled={isLiking}>
           <Heart className={`transition-all duration-300 ${localLiked ? 'text-red-500 fill-current' : 'text-gray-500'}`} />
-          <span className="ml-2">{localLikes}</span>
+          <span className="ml-2">{localLikes/2}</span>
         </Button>
       </CardFooter>
     </UICard>
